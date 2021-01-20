@@ -13,16 +13,15 @@ WORKDIR /var/www/redmine
 
 COPY docker/redmine/database.yml config/database.yml
 COPY docker/redmine/puma.rb config/puma.rb
-
+COPY docker/redmine/entrypoint.sh entrypoint.sh
 # Setting env up
 ENV RAILS_ENV='production'
 ENV RACK_ENV='production' 
 
 # Adding gems
 RUN gem install mysql2 \
-    && bundle install --jobs 20 --retry 5 \
-    && bundle exec rake generate_secret_token
+    && bundle install --jobs 20 --retry 5
 
-RUN bundle exec rake assets:precompile
 EXPOSE 3000
+ENTRYPOINT [ "entrypoint.sh" ]
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
