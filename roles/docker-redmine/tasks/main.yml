@@ -1,0 +1,10 @@
+---
+# tasks file for redmine-docker
+- name: Create the user redmine-docker and add it to the docker group
+  become: yes
+  user:
+    name: docker-redmine
+    shell: /bin/bash
+    groups: docker
+    append: yes
+

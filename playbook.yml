@@ -1,0 +1,21 @@
+---
+- name: Provision docker-compose to hosts
+  hosts: all
+  roles:
+    - docker
+    - docker-compose
+    - docker-redmine
+
+
+        
+        
+
+
+
+
+
+  
+  
+  
+
+

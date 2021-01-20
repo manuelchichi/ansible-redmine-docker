@@ -1,0 +1,20 @@
+---
+# tasks file for docker-compose
+- name: Add docker-compose to /usr/local
+  become: yes
+  command: "curl -L 'https://github.com/docker/compose/releases/download/1.28.0/docker-compose-Linux-x86_64' -o /usr/local/bin/docker-compose"
+  args:
+    creates: /usr/local/bin/docker-compose
+
+- name: Changing perm of "/usr/local/bin/docker-compose", adding "+x"
+  become: yes
+  file: 
+    dest: /usr/local/bin/docker-compose
+    mode: a+x
+    
+- name: Create a symbolic link
+  become: yes
+  file:
+    src: /usr/local/bin/docker-compose
+    dest: /usr/bin/docker-compose
+    state: link

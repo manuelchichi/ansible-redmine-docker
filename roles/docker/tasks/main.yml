@@ -1,0 +1,30 @@
+---
+# tasks file for docker
+
+- name: Install required packages for docker
+  become: yes
+  apt:
+    name: apt-transport-https, ca-certificates, curl, gnupg-agent, software-properties-common
+    update_cache: yes
+
+- name: Add GPG key 
+  become: yes
+  shell: "curl -fsSL 'https://download.docker.com/linux/ubuntu/gpg' | sudo apt-key add >> apt-key-docker.log"
+  args:
+    chdir: /var/log/
+    creates: /var/log/apt-key-docker.log
+
+
+- name: Add docker repository into sources list
+  become: yes
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+- name: Install docker
+  become: yes
+  apt:
+    name: docker-ce, docker-ce-cli, containerd.io
+    update_cache: yes
+
+
