@@ -6,4 +6,4 @@ environment 'production'
 pidfile "#{application_path}/pids/puma.pid"
 state_path "#{application_path}/pids/puma.state"
 stdout_redirect "#{application_path}/log/puma.stdout.log", "#{application_path}/log/puma.stderr.log"
-bind "unix://#{application_path}/sockets/puma.sock"
+bind "tcp://0.0.0.0:3000"
