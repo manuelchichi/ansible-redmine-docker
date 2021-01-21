@@ -19,12 +19,12 @@
 
 - name: Copy docker-compose yml
   become: yes
-  copy:
+  template:
+    src: docker-compose.yml.j2
+    dest: '/home/docker-redmine/redmine-prd/docker-compose.yml'
     owner: docker-redmine
     group: docker-redmine
-    src: docker-compose.yml
-    dest: '/home/docker-redmine/redmine-prd/docker-compose.yml'
-    
+
 - name: Docker Compose up the project
   become: yes
   community.general.docker_compose:
