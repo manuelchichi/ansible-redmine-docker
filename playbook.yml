@@ -1,6 +1,8 @@
 ---
 - name: Provision docker-compose to hosts
   hosts: all
+  vars:
+    use_rds: "false"
   roles:
     - docker
     - docker-compose
