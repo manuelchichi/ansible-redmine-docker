@@ -1,6 +1,6 @@
 version: '3'
 services:
-{% if use_rds == 'false' %}
+{% if use_rds|upper == 'FALSE' %}
   mariadb:
     image: 'bitnami/mariadb:10.5'
     deploy:
@@ -38,7 +38,7 @@ services:
       - '80:80'
       
 volumes:
-{% if use_rds == 'false' %}
+{% if use_rds|upper == 'FALSE' %}
   mariadb_data:
     driver: local
 {% endif %}
