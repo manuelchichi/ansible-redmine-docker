@@ -30,7 +30,7 @@
     login_password: "{{ mariadb_root_password }}"
     host: "%"
     name: redmine
-    password: "{{ mariadb_redmine_password }}"
+    password: "{{ mariadb_password }}"
     priv: 'redmine.*:ALL'
     state: present
     

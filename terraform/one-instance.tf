@@ -76,55 +76,14 @@ resource "aws_db_instance" "redmine-db" {
   }
 }
 
-resource "aws_security_group" "redmine-docker-sg" {
-  name        = "redmine-docker-prd"
-  description = "Allow HTTP inbound traffic"
-  
-  ingress {
-    description = "SSH inbound traffic"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "HTTP inbound traffic"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  
-  ingress {
-    description = "Default SG inbound traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    security_groups = ["default"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags =  {
-    Environment = "Production"
-    Application = "Redmine"
-  }
-}
-
 resource "aws_instance" "redmine-app" {
   ami           = "ami-0885b1f6bd170450c"
   instance_type = "t2.micro"
-  security_groups = [ "redmine-docker-sg" ]
+  security_groups = [ "redmine-sg" ]
   key_name = "conjunto"
 
   provisioner "local-exec" {
-    command = "sleep 120; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key ./conjunto.pem -i '${aws_instance.redmine-app.public_ip},' ../playbook.yml --extra-vars \"run_mariadb=${var.use_rds != "true"} mariadb_root_password=${var.root_user_password} mariadb_redmine_password=${var.redmine_user_password} mariadb_host=${var.use_rds == "true" ? aws_db_instance.redmine-db[0].address : var.localhost}\" "
+    command = "sleep 120; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ubuntu --private-key ./conjunto.pem -i '${aws_instance.redmine-app.public_ip},' ../playbook.yml --extra-vars \"use_rds=${var.use_rds} mariadb_root_password=${var.root_user_password} mariadb_password=${var.redmine_user_password} mariadb_host=${var.use_rds == "true" ? aws_db_instance.redmine-db[0].address : var.localhost}\" "
     }
     
   tags =  {

@@ -27,10 +27,13 @@ services:
     volumes:
       - 'redmine_data:/var/www/redmine/files'
   web:
-    image: 'manuelchichi/nginx-redmine:1.0.0'
+    image: 'manuelchichi/nginx-redmine:4.1.1'
     deploy:
       restart_policy:
         condition: on-failure
+    environment:
+      - APP_HOST=redmine
+      - APP_PORT=3000
     ports:
       - '80:80'
       
