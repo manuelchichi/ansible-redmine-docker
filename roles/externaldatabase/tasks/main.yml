@@ -12,12 +12,25 @@
     src: init-database.sql.j2
     dest: '/tmp/init-database.sql'
 
-- name: Create a data container
+- name: Create init-database container
   become: yes
   community.general.docker_container:
     name: init-database
-    image: manuelchichi/redmine-init-database:4.1.1
+    image: manuelchichi/mysql-client:alpine
     volumes:
       - /tmp/config-file:/tmp/config-file
       - /tmp/init-database.sql:/tmp/init-database.sql
-    command: mysql -h {{ mariadb_host }} --defaults-extra-file=/tmp/config-file -e 'source /tmp/init-database.sql'
+    command: mysql --defaults-extra-file=/tmp/config-file -h {{ mariadb_host }} -e 'source /tmp/init-database.sql'
+
+- name: Remove init-database container
+  community.general.docker_container:
+    name: init-database
+    state: absent
+
+- name: Remove tmp files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/config-file
+    - /tmp/init-database.sql
