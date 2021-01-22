@@ -1,36 +1,23 @@
 ---
-# tasks file for installing mariadb
-- name: Install required packages for mariadb
+# tasks file to initialaze the external database
+- name: Copy config template
   become: yes
-  apt:
-    name: software-properties-common, mariadb-client, python3-pip
-    update_cache: yes
+  template:
+    src: config-file.j2
+    dest: '/tmp/config-file'
 
-- name: Install pymysql
+- name: Copy SQL template
   become: yes
-  pip:
-    name: pymysql
-    state: present
-    
-- name: Create database with name 'redmine'
-  become: yes
-  community.mysql.mysql_db:
-    login_host: "{{ mariadb_host }}"
-    login_user: root
-    login_password: "{{ mariadb_root_password }}"
-    name: redmine
-    encoding: utf8
-    state: present
+  template:
+    src: init-database.sql.j2
+    dest: '/tmp/init-database.sql'
 
-- name: Create user for redmine db
+- name: Create a data container
   become: yes
-  community.mysql.mysql_user:
-    login_host: "{{ mariadb_host }}"
-    login_user: root
-    login_password: "{{ mariadb_root_password }}"
-    host: "%"
-    name: redmine
-    password: "{{ mariadb_password }}"
-    priv: 'redmine.*:ALL'
-    state: present
-    
+  community.general.docker_container:
+    name: init-database
+    image: manuelchichi/redmine-init-database:4.1.1
+    volumes:
+      - /tmp/config-file:/tmp/config-file
+      - /tmp/init-database.sql:/tmp/init-database.sql
+    command: mysql -h {{ mariadb_host }} --defaults-extra-file=/tmp/config-file -e 'source /tmp/init-database.sql'
