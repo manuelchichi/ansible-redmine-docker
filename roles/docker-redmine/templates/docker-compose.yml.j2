@@ -3,6 +3,9 @@ services:
 {% if use_rds == 'false' %}
   mariadb:
     image: 'bitnami/mariadb:10.5'
+    deploy:
+      restart_policy:
+        condition: on-failure
     environment:
       - MARIADB_DATABASE={{ mariadb_dbname }}
       - MARIADB_USER={{ mariadb_user }}
@@ -13,6 +16,9 @@ services:
 {% endif %}
   redmine:
     image: 'manuelchichi/redmine:4.1.1'
+    deploy:
+      restart_policy:
+        condition: on-failure
     environment:
       - DB_HOST={{ mariadb_host }}
       - DB_NAME={{ mariadb_dbname }}
@@ -22,6 +28,9 @@ services:
       - 'redmine_data:/var/www/redmine/files'
   web:
     image: 'manuelchichi/nginx-redmine:1.0.0'
+    deploy:
+      restart_policy:
+        condition: on-failure
     ports:
       - '80:80'
       

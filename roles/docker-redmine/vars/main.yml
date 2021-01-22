@@ -1,6 +1,6 @@
 ---
 # vars file for redmine-docker
-mariadb_host: localhost
+mariadb_host: mariadb
 mariadb_dbname: redmine
 mariadb_user: redmine
 mariadb_password: redmine

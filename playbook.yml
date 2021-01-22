@@ -4,9 +4,11 @@
   vars:
     use_rds: "false"
   roles:
+    - { role: externaldatabase, when: use_rds == "true" }
     - docker
     - docker-compose
     - docker-redmine
+    - iptables
 
 
         

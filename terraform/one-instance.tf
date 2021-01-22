@@ -81,8 +81,8 @@ resource "aws_db_instance" "redmine-db" {
 resource "aws_security_group" "redmine-docker-sg" {
   name        = "redmine-docker-prd"
   description = "Allow HTTP inbound traffic"
-  vpc_id      = aws_vpc.main.id
-
+  vpc_id      = "vpc-864890fb"
+  
   ingress {
     description = "SSH inbound traffic"
     from_port   = 22
@@ -123,7 +123,7 @@ resource "aws_security_group" "redmine-docker-sg" {
 resource "aws_instance" "redmine-app" {
   ami           = "ami-0885b1f6bd170450c"
   instance_type = "t2.micro"
-  security_groups = [ "redmine-sg" ]
+  security_groups = [ "redmine-docker-sg" ]
   key_name = "conjunto"
 
   provisioner "local-exec" {

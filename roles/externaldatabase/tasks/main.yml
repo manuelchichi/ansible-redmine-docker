@@ -1,0 +1,36 @@
+---
+# tasks file for installing mariadb
+- name: Install required packages for mariadb
+  become: yes
+  apt:
+    name: software-properties-common, mariadb-client, python3-pip
+    update_cache: yes
+
+- name: Install pymysql
+  become: yes
+  pip:
+    name: pymysql
+    state: present
+    
+- name: Create database with name 'redmine'
+  become: yes
+  community.mysql.mysql_db:
+    login_host: "{{ mariadb_host }}"
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    name: redmine
+    encoding: utf8
+    state: present
+
+- name: Create user for redmine db
+  become: yes
+  community.mysql.mysql_user:
+    login_host: "{{ mariadb_host }}"
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    host: "%"
+    name: redmine
+    password: "{{ mariadb_redmine_password }}"
+    priv: 'redmine.*:ALL'
+    state: present
+    

@@ -1,0 +1,52 @@
+---
+# tasks file for configuring iptables
+- name: allow destination HTTP, HTTPS and SSH (TCP)
+  become: yes
+  iptables:
+    action: append
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ item }}"
+    ctstate: NEW,ESTABLISHED
+    jump: ACCEPT
+  loop:
+    - 22
+    - 80
+    - 443
+
+- name: allow source DNS, HTTP, HTTPS (tcp)
+  become: yes
+  iptables:
+    action: append
+    chain: INPUT
+    protocol: tcp
+    source_port: "{{ item }}"
+    jump: ACCEPT
+  loop:
+    - 53
+    - 80
+    - 443
+    - 3306
+     
+- name: allow source DNS (UDP)
+  become: yes
+  iptables:
+    action: append
+    chain: INPUT
+    protocol: udp
+    source_port: 53
+    jump: ACCEPT
+    
+- name: allow loopback input
+  become: yes
+  iptables:
+    action: append
+    in_interface: lo
+    chain: INPUT
+    jump: ACCEPT
+    
+- name: drop connections rule
+  become: yes
+  iptables:
+    chain: INPUT
+    policy: DROP
