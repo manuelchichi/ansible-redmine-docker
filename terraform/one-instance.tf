@@ -25,13 +25,11 @@ variable "localhost"{
 variable "root_user_password" {
   type    = string
   default = "ChangeMe12345"
-  sensitive = true
 }
 
 variable "redmine_user_password" {
   type    = string
   default = "ChangeMe12345"
-  sensitive = true
 }
 
 variable "backup_snapshot" {
@@ -81,8 +79,7 @@ resource "aws_db_instance" "redmine-db" {
 resource "aws_security_group" "redmine-docker-sg" {
   name        = "redmine-docker-prd"
   description = "Allow HTTP inbound traffic"
-  vpc_id      = aws_vpc.main.id
-
+  
   ingress {
     description = "SSH inbound traffic"
     from_port   = 22
@@ -104,7 +101,7 @@ resource "aws_security_group" "redmine-docker-sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    security_groups = ["sg-4f0da979"]
+    security_groups = ["default"]
   }
 
   egress {
@@ -123,7 +120,7 @@ resource "aws_security_group" "redmine-docker-sg" {
 resource "aws_instance" "redmine-app" {
   ami           = "ami-0885b1f6bd170450c"
   instance_type = "t2.micro"
-  security_groups = [ "redmine-sg" ]
+  security_groups = [ "redmine-docker-sg" ]
   key_name = "conjunto"
 
   provisioner "local-exec" {
@@ -142,7 +139,7 @@ output "redmine-ip" {
 }
 
 output "database-ip" {
-  value = aws_db_instance.redmine-db[0].address
+  value = var.use_rds == "true" ? aws_db_instance.redmine-db[0].address : var.localhost
 }
 
 
