@@ -23,11 +23,13 @@
     command: mysql --defaults-extra-file=/tmp/config-file -h {{ mariadb_host }} -e 'source /tmp/init-database.sql'
 
 - name: Remove init-database container
+  become: yes
   community.general.docker_container:
     name: init-database
     state: absent
 
 - name: Remove tmp files
+  become: yes
   ansible.builtin.file:
     path: "{{ item }}"
     state: absent
