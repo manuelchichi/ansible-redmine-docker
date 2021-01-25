@@ -36,7 +36,14 @@ services:
       - APP_PORT=3000
     ports:
       - '80:80'
-      
+  rdiffbackups:
+    image: 'manuelchichi/rdiff-backup:alpine'
+    deploy:
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - 'redmine_data:/volume'
+      - '/backups:/backups'
 volumes:
 {% if use_rds|upper == 'FALSE' %}
   mariadb_data:
