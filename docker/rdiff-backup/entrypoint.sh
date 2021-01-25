@@ -1,7 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-echo "$CRON_SCHEDULE rdiff-backup $MOUNTED_VOLUME $BACKUP_DIR" | crontab -
-echo "$CRON_SCHEDULE rdiff-backup --remove-older-than $BACKUP_RETENTION $BACKUP_DIR" | crontab -
+printf "$CRON_SCHEDULE rdiff-backup $MOUNTED_VOLUME $BACKUP_DIR\n$CRON_SCHEDULE rdiff-backup --remove-older-than $BACKUP_RETENTION $BACKUP_DIR" | crontab -
 
 # Start the cron daemon
-exec crond -f -1 -2
+exec crond -f

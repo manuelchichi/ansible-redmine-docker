@@ -38,6 +38,9 @@ services:
       - '80:80'
   rdiffbackups:
     image: 'manuelchichi/rdiff-backup:alpine'
+    environment:
+      - CRON_SCHEDULE=*/5 * * * *
+      - BACKUP_DIR=/backups
     deploy:
       restart_policy:
         condition: on-failure
