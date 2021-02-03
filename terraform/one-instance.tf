@@ -76,6 +76,39 @@ resource "aws_db_instance" "redmine-db" {
   }
 }
 
+resource "aws_volume_attachment" "backup-volume-attachment" {
+  device_name = "/dev/sdh"
+  instance_id = aws_instance.redmine-app.id
+  volume_id   = aws_ebs_volume.backup-volume.id
+  
+  connection {
+    type = "ssh"
+    user        = "ubuntu"
+    private_key = file("./conjunto.pem")
+    host = aws_instance.redmine-app.public_ip
+  } 
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mkfs -t ext4 /dev/xvdh",
+      "sudo mkdir /backups",
+      "sudo mount /dev/xvdh /backups/",
+      "echo '/dev/xvdh /backups ext4 defaults,nofail 0 0' | sudo tee -a /etc/fstab"
+    ]
+  
+  }
+}
+
+resource "aws_ebs_volume" "backup-volume" {
+  availability_zone = aws_instance.redmine-app.availability_zone
+  size              = 5
+  
+  tags =  {
+    Environment = "Production"
+    Application = "Redmine"
+  }
+}
+
 resource "aws_instance" "redmine-app" {
   ami           = "ami-0885b1f6bd170450c"
   instance_type = "t2.micro"
